@@ -30,10 +30,13 @@ void Game::creat_player_decks()
 
 void Game::playTurn()
 { 
-   if(m_pl1.deck.get_m_cards().empty() )
+    cout << "pla SS = " << m_pl1.stacksize() << std::endl;
+    
+   if(m_pl1.stacksize() == 0 || m_pl2.stacksize() == 0)
         {
-            throw std:: runtime_error("Activating another turn after the game is over");
+            throw std:: runtime_error("Activating another turn after the game is over -- ERORRRRR");
         }
+    
    if(&m_pl1 == &m_pl2)
    {
     throw std:: runtime_error("One player");
@@ -46,7 +49,7 @@ void Game::playTurn()
     Card& p2_card = m_pl2.deck.get_m_cards().back();
 
     
-    while(static_cast<int>(p2_card.get_rank()) == static_cast<int>(p1_card.get_rank()) !=0 && !m_pl1.deck.get_m_cards().empty() )
+    while(static_cast<int>(p2_card.get_rank()) == static_cast<int>(p1_card.get_rank()) && m_pl1.stacksize() != 0)
     {
         log.push_back(m_pl1.name + " played " + p1_card.to_string() + ". " + m_pl2.name + " played " + p2_card.to_string() + ". " + " Draw.");
              Draw++;
@@ -58,18 +61,22 @@ void Game::playTurn()
             m_tie_deck.get_m_cards().push_back(p1_card);
             m_tie_deck.get_m_cards().push_back(p2_card);
 
+           
+            if (m_pl1.stacksize() != 0)
+            {
             Card& p1_revers_card = m_pl1.deck.get_m_cards().back();
             Card& p2_revers_card = m_pl2.deck.get_m_cards().back();
-            
+
             m_pl1.deck.get_m_cards().pop_back();
             m_pl2.deck.get_m_cards().pop_back();
-            
+
             m_tie_deck.get_m_cards().push_back(p1_revers_card);
             m_tie_deck.get_m_cards().push_back(p2_revers_card);
 
-            
             p1_card = m_pl1.deck.get_m_cards().back();
             p2_card = m_pl2.deck.get_m_cards().back();
+            }
+
             
             if(static_cast<int>(p2_card.get_rank()) == static_cast<int>(p1_card.get_rank()))
             {
@@ -77,6 +84,35 @@ void Game::playTurn()
                  m_pl2.TurnCount++;
             }
 
+        }
+
+        /////////cards were finished while tie brake///////////
+        if(m_pl1.stacksize() == 0 && m_tie_deck.get_m_cards().size() > 0)
+        {
+            if(m_tie_deck.get_m_cards().size() == 2)
+            {
+                Card& c1 = m_pl1.deck.get_m_cards().back();
+                
+                m_pl1.winning_deck.get_m_cards().push_back(c1);
+                m_tie_deck.get_m_cards().pop_back();
+
+                Card& c2 = m_pl2.deck.get_m_cards().back();
+                m_pl2.winning_deck.get_m_cards().push_back(c2);
+                m_tie_deck.get_m_cards().pop_back();
+            }
+            else
+            {
+                while(!m_tie_deck.get_m_cards().empty()) 
+                { 
+                    m_pl1.winning_deck.get_m_cards().push_back(m_tie_deck.get_m_cards().back());
+                    m_pl2.winning_deck.get_m_cards().push_back(m_tie_deck.get_m_cards().back());
+                    m_tie_deck.get_m_cards().pop_back();
+                    m_tie_deck.get_m_cards().pop_back();
+                }
+                m_pl1.deck.shuffle();
+                m_pl2.deck.shuffle();
+                
+            }
         }
 
          if(static_cast<int>(p1_card.get_rank()) < static_cast<int>(p2_card.get_rank()))
@@ -146,7 +182,7 @@ void Game::playTurn()
            }
         }  
     }  
-
+    cout << "tie deck "<<m_tie_deck.get_m_cards().size()<<std::endl;
     log.push_back(getLastTurn());
 }
 
@@ -154,10 +190,10 @@ void Game::playTurn()
 
 void Game::playAll()
 {
-    while(!m_pl1.deck.get_m_cards().empty() && !m_pl2.deck.get_m_cards().empty())
+    while(m_pl1.stacksize() != 0 && m_pl2.stacksize() != 0 )
     {
         playTurn();
-    }
+    }     
 }
 
 
