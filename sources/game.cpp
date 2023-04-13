@@ -30,11 +30,10 @@ void Game::creat_player_decks()
 
 void Game::playTurn()
 { 
-    cout << "pla SS = " << m_pl1.stacksize() << std::endl;
     
    if(m_pl1.stacksize() == 0 || m_pl2.stacksize() == 0)
         {
-            throw std:: runtime_error("Activating another turn after the game is over -- ERORRRRR");
+            throw std:: runtime_error("Activating another turn after the game is over ");
         }
     
    if(&m_pl1 == &m_pl2)
@@ -123,7 +122,7 @@ void Game::playTurn()
            m_pl1.winning_deck.get_m_cards().push_back(p2_card);
            m_pl1.WinsCount++;
            m_pl1.deck.get_m_cards().pop_back();
-            m_pl2.deck.get_m_cards().pop_back();
+           m_pl2.deck.get_m_cards().pop_back();
            setLastTurn(m_pl1.name + " played " + p1_card.to_string() + " " + m_pl2.name + " played " + p2_card.to_string() + ". " + m_pl1.name + " wins.");           // Alice played Queen of Hearts Bob played 5 of Spades. Alice wins.
            while(!m_tie_deck.get_m_cards().empty())
            {
@@ -182,7 +181,6 @@ void Game::playTurn()
            }
         }  
     }  
-    cout << "tie deck "<<m_tie_deck.get_m_cards().size()<<std::endl;
     log.push_back(getLastTurn());
 }
 
