@@ -17,7 +17,7 @@ using namespace std;
         }
         shuffle();
     }
-
+      // Testing function
     void Deck::print(vector<Card> deck)  {
         for (const auto& card : deck) {
             card.print();
@@ -26,6 +26,9 @@ using namespace std;
         std::cout<< std::endl;
     }
 
+    /*
+        In this function i used c++ shuffle function , I knew about this function from GPT
+    */ 
     void Deck:: shuffle() {
         unsigned seed = std::chrono::system_clock::now().time_since_epoch().count();
         std::shuffle(m_deck.begin(), m_deck.end(), std::default_random_engine(seed));
